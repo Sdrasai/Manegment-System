@@ -1,0 +1,1 @@
+exports.employeeController = require("./employee")
