@@ -7,8 +7,7 @@ module.exports = async function createToken(
   secretKey,
   accessExpire,
   refreshExpire,
-  email = null,
-  name
+  email = null
 ) {
   try {
     const accessToken = jwt.sign(payload, secretKey, {
@@ -19,21 +18,19 @@ module.exports = async function createToken(
     })
 
     if (email) {
-      const employee = await db.employee.findUnique({ where: { email } })
+      // const employee = await db.employee.findUnique({ where: { email } })
 
-      if (employee) {
-        await db.token.create({
-          data: {
-            employee: name,
-            token: refreshToken,
-            employee: {
-              connect: {
-                name: employee.name,
-              },
-            },
-          },
-        })
-      }
+      await db.token.create({
+        data: {
+          employeeEmail: email,
+          token: refreshToken,
+          // employee: {
+          //   connect: {
+          //     name: employee.name,
+          //   },
+          // },
+        },
+      })
     }
 
     return { refreshToken, accessToken }

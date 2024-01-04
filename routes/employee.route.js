@@ -7,7 +7,12 @@ const { authentication } = require("../middleware")
 
 const router = express.Router()
 
-router.post("/register", authentication, employeeController.register)
+// router.post("/register", authentication, employeeController.register)
+router.post(
+  "/createEmployee",
+  authentication,
+  employeeController.createEmployee
+)
 router.post("/login", employeeController.login)
 router.get("/employeeList", authentication, employeeController.employeeList)
 

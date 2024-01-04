@@ -1,21 +1,25 @@
 const jwt = require("jsonwebtoken")
+const { employee } = require("../db")
+const db = require("../db")
 
-const authentication = (req, res, next) => {
+const authentication = async (req, res, next) => {
   try {
     const { authorization } = req.headers
     if (!authorization) {
-      const errorUnAuthorized = new Error("token should be in header!", 401)
-      next(errorUnAuthorized)
+      new Error("token should be in header!", 401)
     }
     const token = authorization.split(" ")[1]
-    const verified = jwt.verify(token, process.env.SECRET_KEY)
+    const payload = jwt.verify(token, process.env.SECRET_KEY)
 
-    if (!verified) {
-      const errorInValid = new Error("token is not valid!", 403)
-      next(errorInValid)
+    if (payload) {
+      const email = payload.email
+      const user = await db.employee.findUnique({ where: { email } })
+      req.user = user
+      if (user.roles === "superadmin") next()
+      else throw new Error("not Authorized")
     }
-    next()
   } catch (error) {
+    console.log(error)
     next(error)
   }
 }
